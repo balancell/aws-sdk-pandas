@@ -187,6 +187,7 @@ def _to_parquet(
     path_root: Optional[str] = None,
     filename_prefix: Optional[str] = None,
     max_rows_by_file: Optional[int] = 0,
+    partition_id: Optional[str] = None
 ) -> List[str]:
     s3_client = s3_client if s3_client else _utils.client(service_name="s3")
     file_path = _get_file_path(
@@ -239,6 +240,7 @@ def to_parquet(  # pylint: disable=too-many-arguments,too-many-locals,too-many-b
     dataset: bool = False,
     filename_prefix: Optional[str] = None,
     partition_cols: Optional[List[str]] = None,
+    partition_id: Optional[str] = None,
     bucketing_info: Optional[BucketingInfoTuple] = None,
     concurrent_partitioning: bool = False,
     mode: Optional[Literal["append", "overwrite", "overwrite_partitions"]] = None,

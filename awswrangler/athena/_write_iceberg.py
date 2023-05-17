@@ -5,6 +5,7 @@ import uuid
 from typing import Any, Dict, Optional
 
 import boto3
+from numpy import partition
 import pandas as pd
 
 from awswrangler import _utils, catalog, exceptions, s3
@@ -31,18 +32,26 @@ def _create_iceberg_table(
     encryption: Optional[str] = None,
     kms_key: Optional[str] = None,
     boto3_session: Optional[boto3.Session] = None,
+    partition_id: Optional[str]=None
 ) -> None:
     if not path:
         raise exceptions.InvalidArgumentValue("Must specify table location to create the table.")
 
     columns_types, _ = catalog.extract_athena_types(df=df, index=index)
     cols_str: str = ", ".join([f"{k} {v}" for k, v in columns_types.items()])
-
-    create_sql: str = (
-        f"CREATE TABLE IF NOT EXISTS {table} ({cols_str}) "
-        f"LOCATION '{path}' "
-        f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet' )"
-    )
+    if partition_id !=None:
+        create_sql: str = (
+            f"CREATE TABLE IF NOT EXISTS {table} ({cols_str}) "
+            f"PARTITIONED BY {partition_id}"
+            f"LOCATION '{path}' "
+            f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet' )"
+        )
+    else:
+        create_sql: str = (
+            f"CREATE TABLE IF NOT EXISTS {table} ({cols_str}) "
+            f"LOCATION '{path}' "
+            f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet' )"
+        )
 
     query_id: str = _start_query_execution(
         sql=create_sql,
@@ -75,6 +84,7 @@ def to_iceberg(
     kms_key: Optional[str] = None,
     boto3_session: Optional[boto3.Session] = None,
     s3_additional_kwargs: Optional[Dict[str, Any]] = None,
+    partition_id: Optional[str]=None
 ) -> None:
     """
     Insert into Athena Iceberg table using INSERT INTO ... SELECT. Will create Iceberg table if it does not exist.
@@ -169,6 +179,7 @@ def to_iceberg(
                 encryption=encryption,
                 kms_key=kms_key,
                 boto3_session=boto3_session,
+                partition_id=partition_id
             )
 
         # Create temporary external table, write the results
@@ -180,6 +191,7 @@ def to_iceberg(
             table=temp_table,
             boto3_session=boto3_session,
             s3_additional_kwargs=s3_additional_kwargs,
+
         )
 
         # Insert into iceberg table
