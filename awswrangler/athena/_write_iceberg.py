@@ -16,7 +16,7 @@ from awswrangler.athena._utils import (
     _start_query_execution,
     _WorkGroupConfig,
 )
-from awswrangler..typing import S
+from awswrangler.typing import _S3WriteDataReturnValue
 
 _logger: logging.Logger = logging.getLogger(__name__)
 
@@ -85,8 +85,8 @@ def to_iceberg(
     kms_key: Optional[str] = None,
     boto3_session: Optional[boto3.Session] = None,
     s3_additional_kwargs: Optional[Dict[str, Any]] = None,
-    partition_id: Optional[str]=None,
-    mode: Optional[str]='append'
+    partition_id: Optional[str]=None
+    # /mode: Optional[str]='append'
 ) -> None:
     """
     Insert into Athena Iceberg table using INSERT INTO ... SELECT. Will create Iceberg table if it does not exist.
@@ -185,7 +185,7 @@ def to_iceberg(
             )
 
         # Create temporary external table, write the results
-        id: _S3WriteDataReturnValue=s3.to_parquet(
+        id_query: _S3WriteDataReturnValue=s3.to_parquet(
             df=df,
             path=table_location,
             dataset=True,
@@ -207,7 +207,7 @@ def to_iceberg(
         #     kms_key=kms_key,
         #     boto3_session=boto3_session,
         # )
-        wait_query(id)
+        wait_query(id_query)
 
     except Exception as ex:
         _logger.error(ex)
