@@ -186,10 +186,10 @@ def to_iceberg(
         # Create temporary external table, write the results
         s3.to_parquet(
             df=df,
-            path=temp_path or wg_config.s3_output,
+            path=table_location or wg_config.s3_output,
             dataset=True,
             database=database,
-            table=temp_table,
+            table=table,
             boto3_session=boto3_session,
             s3_additional_kwargs=s3_additional_kwargs,
             mode="overwrite"
@@ -197,16 +197,16 @@ def to_iceberg(
         )
 
         # Insert into iceberg table
-        query_id: str = _start_query_execution(
-            sql=f'INSERT INTO "{database}"."{table}" SELECT * FROM "{database}"."{temp_table}"',
-            workgroup=workgroup,
-            wg_config=wg_config,
-            database=database,
-            data_source=data_source,
-            encryption=encryption,
-            kms_key=kms_key,
-            boto3_session=boto3_session,
-        )
+        # query_id: str = _start_query_execution(
+        #     sql=f'INSERT INTO "{database}"."{table}" SELECT * FROM "{database}"."{temp_table}"',
+        #     workgroup=workgroup,
+        #     wg_config=wg_config,
+        #     database=database,
+        #     data_source=data_source,
+        #     encryption=encryption,
+        #     kms_key=kms_key,
+        #     boto3_session=boto3_session,
+        # )
         wait_query(query_id)
 
     except Exception as ex:
