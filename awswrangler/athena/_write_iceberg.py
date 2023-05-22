@@ -192,7 +192,7 @@ def to_iceberg(
             table=temp_table,
             boto3_session=boto3_session,
             s3_additional_kwargs=s3_additional_kwargs,
-            mode=mode
+            mode="overwrite"
 
         )
 
