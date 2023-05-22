@@ -82,6 +82,7 @@ def _start_query_execution(
     encryption: Optional[str] = None,
     kms_key: Optional[str] = None,
     boto3_session: Optional[boto3.Session] = None,
+    # partition_id: Optional[str] = None
 ) -> str:
     args: Dict[str, Any] = {"QueryString": sql}
 

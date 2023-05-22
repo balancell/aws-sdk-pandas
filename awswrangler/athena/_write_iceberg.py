@@ -84,7 +84,8 @@ def to_iceberg(
     kms_key: Optional[str] = None,
     boto3_session: Optional[boto3.Session] = None,
     s3_additional_kwargs: Optional[Dict[str, Any]] = None,
-    partition_id: Optional[str]=None
+    partition_id: Optional[str]=None,
+    mode: Optional[str]='append'
 ) -> None:
     """
     Insert into Athena Iceberg table using INSERT INTO ... SELECT. Will create Iceberg table if it does not exist.
@@ -191,6 +192,7 @@ def to_iceberg(
             table=temp_table,
             boto3_session=boto3_session,
             s3_additional_kwargs=s3_additional_kwargs,
+            mode=mode
 
         )
 
@@ -214,7 +216,7 @@ def to_iceberg(
     finally:
         catalog.delete_table_if_exists(database=database, table=temp_table, boto3_session=boto3_session)
 
-        if keep_files is False:
+        if not keep_files:
             s3.delete_objects(
                 path=temp_path or wg_config.s3_output,  # type: ignore[arg-type]
                 boto3_session=boto3_session,
