@@ -16,6 +16,7 @@ from awswrangler.athena._utils import (
     _start_query_execution,
     _WorkGroupConfig,
 )
+from awswrangler..typing import S
 
 _logger: logging.Logger = logging.getLogger(__name__)
 
@@ -184,16 +185,15 @@ def to_iceberg(
             )
 
         # Create temporary external table, write the results
-        s3.to_parquet(
+        id: _S3WriteDataReturnValue=s3.to_parquet(
             df=df,
-            path=table_location or wg_config.s3_output,
+            path=table_location,
             dataset=True,
             database=database,
             table=table,
             boto3_session=boto3_session,
             s3_additional_kwargs=s3_additional_kwargs,
             mode="overwrite"
-
         )
 
         # Insert into iceberg table
@@ -207,7 +207,7 @@ def to_iceberg(
         #     kms_key=kms_key,
         #     boto3_session=boto3_session,
         # )
-        wait_query(query_id)
+        wait_query(id)
 
     except Exception as ex:
         _logger.error(ex)
