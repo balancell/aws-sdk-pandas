@@ -1,5 +1,6 @@
 """Amazon Athena Module containing all to_* write functions."""
 
+import gzip
 import logging
 import uuid
 from typing import Any, Dict, Optional
@@ -187,6 +188,7 @@ def to_iceberg(
         s3.to_parquet(
             df=df,
             path=table_location,
+            compression='gzip',
             dataset=True,
             database=database,
             table=table,
