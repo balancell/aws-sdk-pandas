@@ -43,7 +43,7 @@ def _create_iceberg_table(
     if partition_id !=None:
         create_sql: str = (
             f"CREATE TABLE IF NOT EXISTS {table} ({cols_str}) "
-            f"PARTITIONED BY {partition_id}"
+            f"PARTITIONED BY {partition_id} "
             f"LOCATION '{path}' "
             f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet', 'write_compression'='gzip' )"
         )
