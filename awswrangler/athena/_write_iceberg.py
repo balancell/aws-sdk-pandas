@@ -44,13 +44,13 @@ def _create_iceberg_table(
             f"CREATE TABLE IF NOT EXISTS {table} ({cols_str}) "
             f"PARTITIONED BY {partition_id}"
             f"LOCATION '{path}' "
-            f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet' )"
+            f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet', 'write_compression'='gzip' )"
         )
     else:
         create_sql: str = (
             f"CREATE TABLE IF NOT EXISTS {table} ({cols_str}) "
             f"LOCATION '{path}' "
-            f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet' )"
+            f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet',  'write_compression'='gzip' )"
         )
 
     query_id: str = _start_query_execution(
