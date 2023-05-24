@@ -37,7 +37,7 @@ def _create_iceberg_table(
 ) -> None:
     if not path:
         raise exceptions.InvalidArgumentValue("Must specify table location to create the table.")
-
+    print(partition_id)
     columns_types, _ = catalog.extract_athena_types(df=df, index=index)
     cols_str: str = ", ".join([f"{k} {v}" for k, v in columns_types.items()])
     if partition_id !=None:
