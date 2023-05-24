@@ -53,6 +53,7 @@ def _create_iceberg_table(
             f"LOCATION '{path}' "
             f"TBLPROPERTIES ( 'table_type' ='ICEBERG', 'format'='parquet',  'write_compression'='gzip' )"
         )
+    print(create_sql)
 
     query_id: str = _start_query_execution(
         sql=create_sql,
